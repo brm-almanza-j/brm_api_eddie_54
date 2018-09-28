@@ -8,6 +8,7 @@ class Otb_Usuarios_Detalles extends Model
 {
     protected $table = "otb_usuario_detalle";
     public $timestamps = false;
+    protected  $primaryKey = 'id_usuario';
 
     protected $fillable = [
         'id_usuario', 'id_rol','id_area', 'id_ciudad', 'id_grupo',

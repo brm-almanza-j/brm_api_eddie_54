@@ -12,7 +12,7 @@ class RegionalesController extends Controller
         return $regionales;
     }
 
-    public function getAllRegionles(){
+    public function getAllRegionales(){
         $all_regional = Otb_Regionales::all();
         return $all_regional;
     }
