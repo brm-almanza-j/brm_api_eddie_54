@@ -7,12 +7,14 @@ use App\Helpers\Recursos;
 use App\Otb_Ordenes_Trabajos;
 use App\Otb_Historicos_Ots;
 use App\Otb_Usuarios_Ots;
+use App\Otb_Urls_Ots;
 
 class OrdenesTrabajosController extends Controller
 {
     public function index($id_usuario){
-        $ots = Otb_Ordenes_Trabajos::with('estado', 'cliente', 'marca', 'grupo', 'tipo_ot', 'usuario_crea', 'franja_horaria')
+        $ots = Otb_Ordenes_Trabajos::with('estado', 'cliente', 'marca', 'grupo', 'tipo_ot', 'usuario_crea', 'franja_horaria', 'urls_ot')
             ->join('otb_usuarios_ot', 'otb_orden_trabajo.id', '=', 'otb_usuarios_ot.id_orde_trabajo')
+            ->join('otb_url_ot', 'otb_orden_trabajo.id', '=', 'otb_url_ot.id_ot')
             ->where('otb_usuarios_ot.id_usuario', '=', $id_usuario)
             ->orderBy('id', 'ASC')->paginate(5);
         return $ots;
@@ -25,22 +27,40 @@ class OrdenesTrabajosController extends Controller
 
     public function addOts(Request $request){
         $add_ots = Otb_Ordenes_Trabajos::create($request->all());
-        $idot  = $add_ots->id;
+        $idot = $add_ots->id;
+        $urls = $request->url;
         $idusuarios  = $request->id_usuarios_responsables;
-        foreach($idusuarios as $items){
-            $add_usu_ots = new Otb_Usuarios_Ots();
-            $add_usu_ots->id_orde_trabajo = $idot;
-            $add_usu_ots->id_usuario = $items;
-            $add_usu_ots->finalizado = "0";
-            $add_usu_ots->save();
-        }
+
+        $this->addUrls($idot, $urls);
+        $this->addUserOts($idot, $idusuarios);
+
         $addhistorico = new Otb_Historicos_Ots();
         $addhistorico->id_estado = "1";
         $addhistorico->comentario = $request->descripcion;
         $addhistorico->id_orden_trabajo = $idot;
         $addhistorico->id_usuario_comenta = $request->id_usuario_crea;
         $addhistorico->save();
-        //return $add_ots."|||".$add_usu_ots."|||".$addhistorico;
+    }
+
+    public function addUrls($id_order ,$urls){
+        $explode_url = explode('ø', $urls);
+        foreach($explode_url as $item_u){
+            $add_url_ot = new Otb_Urls_Ots();
+            $add_url_ot->url = $item_u;
+            $add_url_ot->id_ot = $id_order;
+            $add_url_ot->save();
+        }
+    }
+
+    public function addUserOts($id_order, $id_users){
+        $explode_id = explode('ø', $id_users);
+        foreach($explode_id as $items){
+            $add_usu_ots = new Otb_Usuarios_Ots();
+            $add_usu_ots->id_orde_trabajo = $id_order;
+            $add_usu_ots->id_usuario = $items;
+            $add_usu_ots->finalizado = "0";
+            $add_usu_ots->save();
+        }
     }
 
     public function getOts($id){

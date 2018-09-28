@@ -170,3 +170,8 @@ Route::post('rol', 'RolesController@addRoles')->name('addRoles');
 Route::get('roles/{id}', 'RolesController@getRoles')->name('getRol');
 Route::put('rol/{id}', 'RolesController@editRoles')->name('editRoles');
 Route::delete('rol/{id}', 'RolesController@deleteRoles')->name('deleteRoles');
+
+/**
+ * Rutas Urls
+ */
+Route::get('url/{id}', 'UrlsController@getUrls')->name('getUrl');

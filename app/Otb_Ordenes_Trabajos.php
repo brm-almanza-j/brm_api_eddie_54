@@ -14,7 +14,7 @@ class Otb_Ordenes_Trabajos extends Model
         'descripcion', 'fecha_inicio', 'fecha_fin', 'id_cliente',
         'id_marca', 'id_grupo', 'id_tipo_ot', 'tiempo_asignado',
         'id_usuario_crea', 'id_franja_horaria',
-        'tiempo_gastado', 'url_archivos', 'fecha_cierre'
+        'tiempo_gastado', 'fecha_cierre'
     ];
 
     public function historicos_ots(){
@@ -23,6 +23,10 @@ class Otb_Ordenes_Trabajos extends Model
 
     public function usuarios_ots(){
         return $this->hasMany('App\Otb_Usuarios_Ots');
+    }
+
+    public function urls_ot(){
+        return $this->hasMany('App\Otb_Urls_Ots', 'id');
     }
 
     public function estado(){
